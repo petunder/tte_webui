@@ -1,0 +1,16 @@
+{
+    "sample_rate": 44100,
+    "file_format": "mp3",
+    "silence_duration": 0.4,
+    "silence_threshold": -40,
+    "lambd": 0.8,
+    "tau": 0.5,
+    "solver": "euler",
+    "nfe": 96,
+    "whisper_model_language": "multilingual",
+    "whisper_model_size": "large",
+    "whisper_language": "original",
+    "silero_sample_rate": 24000,
+    "use_llm_for_ssml": false,
+    "tts_language": "en"
+}
