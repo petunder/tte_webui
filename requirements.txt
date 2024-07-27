@@ -1,0 +1,14 @@
+flask
+flask_cors
+flask_restful
+requests
+numpy
+pandas
+transformers
+torch
+gunicorn
+jinja2
+gradio
+soundfile
+langid
+whisper
