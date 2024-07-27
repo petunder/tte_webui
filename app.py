@@ -30,7 +30,7 @@ def main():
 
         tabs.select(on_tab_select, None, None)
 
-        demo.launch(share=False, server_name="0.0.0.0", server_port=7861, auth=("b", "a"))
+        demo.launch(share=False, server_name="0.0.0.0", server_port=7861)
 
 if __name__ == "__main__":
     main()
