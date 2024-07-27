@@ -1,10 +1,12 @@
 # tte_webui
 # TTE (Text to Everything) WebUI
 
-TTE (Text to Everything) WebUI is a web-based interface for generating text-based outputs for various applications. This project leverages modern web technologies and large language models (LLMs) to provide a user-friendly and powerful platform for text generation.
+TTE (Text to Everything) WebUI is a web-based interface for generating and processing text and audio. This project leverages modern web technologies and large language models (LLMs) to provide a user-friendly and powerful platform for text and audio processing tasks.
 
 ## Features
 
+- **Audio to Text**: Convert audio files to text using advanced speech-to-text models.
+- **Audio Enhancement**: Improve the quality of audio files with built-in enhancement features.
 - **Modular Architecture**: Easily extend the functionalities by adding new modules.
 - **Class-based Structure**: Organized code with clear class definitions for better maintainability.
 - **LLM Integration**: Seamlessly integrate large language models for text generation tasks.
