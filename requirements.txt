@@ -1,0 +1,11 @@
+gradio==4.39.0
+langid==1.1.6
+numpy==2.0.1
+requests==2.32.3
+soundfile==0.12.1
+torch==2.4.0
+whisper==1.1.10
+classes==0.4.1
+llm==0.15
+modules==1.0.0
+
