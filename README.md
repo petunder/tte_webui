@@ -45,7 +45,7 @@ TTE (Text to Everything) WebUI is a web-based interface for generating text-base
 ### Usage
 
 1. Start the application by running `python app.py`.
-2. Open your web browser and navigate to `http://localhost:5000`.
+2. Open your web browser and navigate to `http://localhost:7861`.
 3. Interact with the UI to generate text-based outputs.
 
 ## Contributing
