@@ -35,8 +35,12 @@ TTE (Text to Everything) WebUI is a web-based interface for generating and proce
    ```sh
    pip install numpy==1.26.0 --only-binary=:all:
    ```
+   and update the following:
+   ```sh
+   pip install --upgrade wheel & pip install --upgrade build & pip install --upgrade cython
+   ```   
 
-3. Run the application:
+4. Run the application:
     ```sh
     python app.py
     ```
