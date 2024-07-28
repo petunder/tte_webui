@@ -1,11 +1,16 @@
 import requests
 import logging
+from configparser import ConfigParser
 
 logger = logging.getLogger(__name__)
+# Read configuration
+config = ConfigParser()
+config.read('config.ini')
+ollama_url = config.get('ollama', 'url')
 
 def process_chunk(chunk, model, system_prompt=None, temperature=0.3, top_k=40, top_p=0.9, repeat_penalty=1.2, max_tokens=2048):
     logger.debug(f"Sending request to Ollama API. Chunk length: {len(chunk)}")
-    url = "http://192.168.1.70:11434/api/generate"
+   
     
     payload = {
         "model": model,
@@ -27,7 +32,7 @@ def process_chunk(chunk, model, system_prompt=None, temperature=0.3, top_k=40, t
     
     try:
         logger.debug("Sending POST request to Ollama API")
-        response = requests.post(url, headers=headers, json=payload, timeout=90)
+        response = requests.post(ollama_url, headers=headers, json=payload, timeout=90)
         response.raise_for_status()
         result = response.json()['response']
         logger.debug(f"Received response from Ollama API. Response length: {len(result)}")
