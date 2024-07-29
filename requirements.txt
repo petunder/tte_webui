@@ -8,4 +8,5 @@ whisper==1.1.10
 classes==0.4.1
 llm==0.15
 modules==1.0.0
+configparser==7.0.0
 
