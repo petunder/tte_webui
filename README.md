@@ -26,8 +26,12 @@ TTE (Text to Everything) WebUI is a web-based interface for generating and proce
     git clone https://github.com/petunder/tte_webui.git
     cd tte_webui
     ```
+2. Сheck if there is ffmpeg on your computer; otherwise it will be automatically installed
+   ```sh
+    python ffmpeg_check.py
+    ```
 
-2. Install the required packages:
+3. Install the required packages:
     ```sh
     pip install -r requirements.txt
     ```
