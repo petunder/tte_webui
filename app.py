@@ -1,27 +1,27 @@
-# app.py
 import gradio as gr
 from ui.audio_interface import create_combined_interface
 from ui.settings_interface import create_settings_interface
-from ui.text2voice_interface import create_text2voice_interface  # Добавим новый импорт
+from ui.txt2img_interface import create_text2image_interface  # Добавлен новый импорт для text-to-image
 
 def main():
     with gr.Blocks() as demo:
-        gr.Markdown("# Audio Processing App")
-        
+        gr.Markdown("# Audio and Image Processing App")
+
         with gr.Tabs() as tabs:
             with gr.TabItem("Audio Processing", id="audio_tab"):
                 audio_interface = create_combined_interface()
+
+            with gr.TabItem("Text to Image", id="text2image_tab"):  # Добавлена новая вкладка
+                text2image_interface = create_text2image_interface()
             
-            # with gr.TabItem("Text to Voice", id="text2voice_tab"):  # Добавим новую вкладку
-            #     text2voice_interface = create_text2voice_interface()
             with gr.TabItem("Settings", id="settings_tab"):
                 settings_interface = create_settings_interface()
 
         def on_tab_select(tab: gr.SelectData):
             if tab.value == "Audio Processing":
                 return audio_interface.update()
-            # elif tab.value == "Text to Voice":
-            #     return text2voice_interface.update()
+            elif tab.value == "Text to Image":  # Обработка выбора вкладки text-to-image
+                return text2image_interface.update()
             return None
 
         tabs.select(on_tab_select, None, None)
