@@ -68,7 +68,7 @@ def create_settings_interface():
         result = gr.Textbox(label="Result")
 
         def save_changes(sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe, 
-                         whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language):
+                         whisper_model_language, whisper_model_size, whisper_language):
             new_settings = {
 
 
@@ -82,10 +82,7 @@ def create_settings_interface():
                 'nfe': nfe,
                 'whisper_model_language': whisper_model_language,
                 'whisper_model_size': whisper_model_size,
-                'whisper_language': whisper_language,
-                'silero_sample_rate': silero_sample_rate,
-                'use_llm_for_ssml': use_llm_for_ssml,
-                'tts_language': tts_language
+                'whisper_language': whisper_language
             }
             update_settings(new_settings)
             return "Settings saved successfully!"
@@ -105,29 +102,26 @@ def create_settings_interface():
                 new_settings['whisper_model_language'],
                 new_settings['whisper_model_size'],
                 new_settings['whisper_language'],
-                new_settings['silero_sample_rate'],
-                new_settings['use_llm_for_ssml'],
-                new_settings['tts_language'],
                 "Settings reset to default values!"
             )
 
         save_button.click(
             save_changes,
             inputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
-                    whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language],
+                    whisper_model_language, whisper_model_size, whisper_language],
             outputs=result
         )
         reset_button.click(
             reset_to_default,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
-                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language, result]
+                     whisper_model_language, whisper_model_size, whisper_language, result]
         )
 
         # Загрузка текущих настроек при инициализации интерфейса
         settings_interface.load(
             load_current_settings,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
-                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language]
+                     whisper_model_language, whisper_model_size, whisper_language]
         )
 
     return settings_interface
