@@ -32,7 +32,7 @@ def create_text2image_interface():
 
         def display_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height, image_format):
             image_paths = generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height, image_format)
-            return image_paths
+            return [(path, "") for path in image_paths]
 
         generate_btn.click(
             display_images,
