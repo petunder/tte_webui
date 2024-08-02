@@ -17,12 +17,12 @@ class Text2ImageProcessor:
             if self.device == "cuda":
                 self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16)
             else:
-                self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path)
+                self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float32)
             self.pipe = self.pipe.to(self.device)
         return self.pipe
 
     def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
-                       image_format="png"):
+                       num_images=1, image_format="png"):
         gc.collect()
         if self.device == "cuda":
             torch.cuda.empty_cache()
@@ -40,6 +40,7 @@ class Text2ImageProcessor:
                 guidance_scale=guidance_scale,
                 width=width,
                 height=height,
+                num_images_per_prompt=num_images,
             )
             images = output.images
 
