@@ -9,8 +9,5 @@
     "nfe": 96,
     "whisper_model_language": "multilingual",
     "whisper_model_size": "large",
-    "whisper_language": "original",
-    "silero_sample_rate": 24000,
-    "use_llm_for_ssml": false,
-    "tts_language": "en"
+    "whisper_language": "original"
 }

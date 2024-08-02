@@ -16,10 +16,7 @@ class Settings:
             'nfe': 64,
             'whisper_model_language': 'multilingual',
             'whisper_model_size': 'base',
-            'whisper_language': 'original',
-            'silero_sample_rate': 24000,
-            'use_llm_for_ssml': False,
-            'tts_language': 'en'
+            'whisper_language': 'original'
         }
         self.load_settings()
 

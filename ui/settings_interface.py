@@ -58,14 +58,6 @@ def create_settings_interface():
                     whisper_model_size = gr.Radio(label="Model Size", choices=["tiny", "base", "small", "medium", "large"], value="base")
                     whisper_language = gr.Radio(label="Transcription Language", choices=["original", "english"], value="original")
 
-        with gr.Row():
-            with gr.Column():
-                with gr.Group():
-                    gr.Markdown("## Silero TTS Settings")
-                    silero_sample_rate = gr.Dropdown(label="Sample Rate", choices=sample_rate_choices)
-                    use_llm_for_ssml = gr.Checkbox(label="Generate SSML using LLM", value=False)
-                    tts_language = gr.Dropdown(label="TTS Language", choices=available_languages)
-
 
 
 
