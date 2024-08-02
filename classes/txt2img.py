@@ -19,33 +19,32 @@ class Text2ImageProcessor:
 
     def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
                        num_images=1, image_format="png"):
+        torch.cuda.empty_cache()
         gc.collect()
-        if self.device == "cuda":
-            torch.cuda.empty_cache()
 
         # Ensure width and height are multiples of 64
         width = (width // 64) * 64
         height = (height // 64) * 64
 
         pipe = self._load_model()
-        with torch.no_grad():
-            output = pipe(
-                prompt,
-                negative_prompt=negative_prompt,
-                num_inference_steps=num_inference_steps,
-                guidance_scale=guidance_scale,
-                width=width,
-                height=height,
-                num_images_per_prompt=num_images,
-            )
-            images = output.images
-
-        # Clear resources
-        del pipe
-        del output
-        gc.collect()
-        if self.device == "cuda":
+        try:
+            with torch.no_grad():
+                output = pipe(
+                    prompt,
+                    negative_prompt=negative_prompt,
+                    num_inference_steps=num_inference_steps,
+                    guidance_scale=guidance_scale,
+                    width=width,
+                    height=height,
+                    num_images_per_prompt=num_images,
+                )
+                images = output.images.copy()  # Make a copy of the images
+        finally:
+            # Ensure cleanup happens even if an error occurs
+            del pipe
+            del output
             torch.cuda.empty_cache()
+            gc.collect()
 
         image_paths = []
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -64,4 +63,13 @@ class Text2ImageProcessor:
 
             image_paths.append(output_path)
 
+        del images
+        torch.cuda.empty_cache()
+        gc.collect()
+
         return image_paths
+
+    @staticmethod
+    def clear_memory():
+        torch.cuda.empty_cache()
+        gc.collect()
