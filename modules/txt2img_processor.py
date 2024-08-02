@@ -1,4 +1,4 @@
-# text2image_technology.py
+# text2image_processor.py
 from classes.txt2img import Text2ImageProcessor
 
 def generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height, image_format):
