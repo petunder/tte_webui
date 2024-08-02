@@ -45,11 +45,9 @@ class Text2ImageProcessor:
             images = output.images
 
         # Clear resources
+        del output
+        gc.collect()
         if self.device == "cuda":
-            pipe = pipe.to("cpu")
-            del pipe
-            del output
-            gc.collect()
             torch.cuda.empty_cache()
 
         image_paths = []
