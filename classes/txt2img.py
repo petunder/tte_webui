@@ -24,6 +24,20 @@ class Text2ImageProcessor:
             torch.cuda.empty_cache()
         gc.collect()
 
+    def _unload_model(self, pipe):
+        if self.device == "cuda":
+            for component in pipe.components.values():
+                if hasattr(component, 'to'):
+                    component.to('cpu')
+                if hasattr(component, 'parameters'):
+                    for param in component.parameters():
+                        if param.data is not None:
+                            param.data = param.data.to('cpu')
+                        if param._grad is not None:
+                            param._grad.data = param._grad.data.to('cpu')
+        del pipe
+        self.clear_memory()
+
     def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
                        num_images=1, image_format="png"):
         self.clear_memory()
@@ -46,13 +60,7 @@ class Text2ImageProcessor:
                 )
                 images = [img.copy() for img in output.images]  # Make copies of the images
         finally:
-            # Aggressively clear CUDA memory
-            if self.device == "cuda":
-                for param in pipe.parameters():
-                    param.data = param.data.to("cpu")
-                    if param._grad is not None:
-                        param._grad.data = param._grad.data.to("cpu")
-            del pipe
+            self._unload_model(pipe)
             del output
             self.clear_memory()
 
