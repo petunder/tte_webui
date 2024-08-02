@@ -15,5 +15,5 @@ def generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale
             image_format=image_format
         )
     finally:
-        Text2ImageProcessor.clear_memory()
+        processor.clear_memory()
     return image_paths

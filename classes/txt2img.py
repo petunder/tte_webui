@@ -17,10 +17,16 @@ class Text2ImageProcessor:
             pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float32)
         return pipe.to(self.device)
 
+    @staticmethod
+    def clear_memory():
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+            torch.cuda.empty_cache()
+        gc.collect()
+
     def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
                        num_images=1, image_format="png"):
-        torch.cuda.empty_cache()
-        gc.collect()
+        self.clear_memory()
 
         # Ensure width and height are multiples of 64
         width = (width // 64) * 64
@@ -38,13 +44,17 @@ class Text2ImageProcessor:
                     height=height,
                     num_images_per_prompt=num_images,
                 )
-                images = output.images.copy()  # Make a copy of the images
+                images = [img.copy() for img in output.images]  # Make copies of the images
         finally:
-            # Ensure cleanup happens even if an error occurs
+            # Aggressively clear CUDA memory
+            if self.device == "cuda":
+                for param in pipe.parameters():
+                    param.data = param.data.to("cpu")
+                    if param._grad is not None:
+                        param._grad.data = param._grad.data.to("cpu")
             del pipe
             del output
-            torch.cuda.empty_cache()
-            gc.collect()
+            self.clear_memory()
 
         image_paths = []
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -64,12 +74,6 @@ class Text2ImageProcessor:
             image_paths.append(output_path)
 
         del images
-        torch.cuda.empty_cache()
-        gc.collect()
+        self.clear_memory()
 
         return image_paths
-
-    @staticmethod
-    def clear_memory():
-        torch.cuda.empty_cache()
-        gc.collect()
