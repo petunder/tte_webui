@@ -46,8 +46,9 @@ class Text2ImageProcessor:
 
         # Clear resources
         del output
-        gc.collect()
         if self.device == "cuda":
+            # Move the pipeline to CPU to free up VRAM
+            self.pipe.to("cpu")
             torch.cuda.empty_cache()
 
         image_paths = []
@@ -66,5 +67,9 @@ class Text2ImageProcessor:
                 image.save(output_path, "JPEG", quality=95)
 
             image_paths.append(output_path)
+
+        # Move the pipeline back to GPU if it was on GPU before
+        if self.device == "cuda":
+            self.pipe.to(self.device)
 
         return image_paths
