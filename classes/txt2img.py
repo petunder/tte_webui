@@ -5,21 +5,17 @@ from diffusers import StableDiffusion3Pipeline
 from datetime import datetime
 import os
 
-
 class Text2ImageProcessor:
     def __init__(self, model_path="v2ray/stable-diffusion-3-medium-diffusers"):
         self.model_path = model_path
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.pipe = None
 
     def _load_model(self):
-        if self.pipe is None:
-            if self.device == "cuda":
-                self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16)
-            else:
-                self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float32)
-            self.pipe = self.pipe.to(self.device)
-        return self.pipe
+        if self.device == "cuda":
+            pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16)
+        else:
+            pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float32)
+        return pipe.to(self.device)
 
     def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
                        num_images=1, image_format="png"):
@@ -45,10 +41,10 @@ class Text2ImageProcessor:
             images = output.images
 
         # Clear resources
+        del pipe
         del output
+        gc.collect()
         if self.device == "cuda":
-            # Move the pipeline to CPU to free up VRAM
-            self.pipe.to("cpu")
             torch.cuda.empty_cache()
 
         image_paths = []
@@ -67,9 +63,5 @@ class Text2ImageProcessor:
                 image.save(output_path, "JPEG", quality=95)
 
             image_paths.append(output_path)
-
-        # Move the pipeline back to GPU if it was on GPU before
-        if self.device == "cuda":
-            self.pipe.to(self.device)
 
         return image_paths
