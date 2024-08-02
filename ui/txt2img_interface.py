@@ -1,6 +1,8 @@
 # text2image_interface.py
 import gradio as gr
 from modules.txt2img_processor import generate_images
+
+
 def create_text2image_interface():
     with gr.Blocks() as text2image_tab:
         gr.Markdown("## Generate images from text using Stable Diffusion 3")

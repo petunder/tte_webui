@@ -13,13 +13,17 @@ class Text2ImageProcessor:
 
     def _load_model(self):
         if self.pipe is None:
-            self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16)
+            if self.device == "cuda":
+                self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16)
+            else:
+                self.pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path)
             self.pipe = self.pipe.to(self.device)
         return self.pipe
 
     def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height, image_format="png"):
         gc.collect()
-        torch.cuda.empty_cache()
+        if self.device == "cuda":
+            torch.cuda.empty_cache()
 
         # Ensure width and height are multiples of 64
         width = (width // 64) * 64
@@ -38,11 +42,12 @@ class Text2ImageProcessor:
             image = output.images[0]
 
         # Clear resources
-        pipe = pipe.to("cpu")
-        del pipe
-        del output
-        gc.collect()
-        torch.cuda.empty_cache()
+        if self.device == "cuda":
+            pipe = pipe.to("cpu")
+            del pipe
+            del output
+            gc.collect()
+            torch.cuda.empty_cache()
 
         # Create a unique filename
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -56,5 +61,8 @@ class Text2ImageProcessor:
         else:
             image = image.convert("RGB")
             image.save(output_path, "JPEG", quality=95)
+
+        return output_path
+
 
         return output_path
