@@ -20,10 +20,7 @@ def create_settings_interface():
             current_settings['nfe'],
             current_settings['whisper_model_language'],
             current_settings['whisper_model_size'],
-            current_settings['whisper_language'],
-            current_settings['silero_sample_rate'],
-            current_settings['use_llm_for_ssml'],
-            current_settings['tts_language'],
+            current_settings['whisper_language']
         )
 
     with gr.Blocks() as settings_interface:
