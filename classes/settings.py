@@ -16,7 +16,17 @@ class Settings:
             'nfe': 64,
             'whisper_model_language': 'multilingual',
             'whisper_model_size': 'base',
-            'whisper_language': 'original'
+            'whisper_language': 'original',
+            'silero_sample_rate': 24000,
+            'use_llm_for_ssml': False,
+            'tts_language': 'en',
+            'num_inference_steps': 28,
+            'guidance_scale': 7,
+            'num_images': 1,
+            'width': 1024,
+            'height': 1024,
+            'image_format': 'png',
+            'ollama_url': 'http://192.168.1.70:11434/api/generate'
         }
         self.load_settings()
 
