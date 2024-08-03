@@ -1,13 +1,23 @@
 {
     "sample_rate": 44100,
-    "file_format": "mp3",
+    "file_format": "wav",
     "silence_duration": 0.4,
     "silence_threshold": -40,
     "lambd": 0.8,
     "tau": 0.5,
     "solver": "euler",
-    "nfe": 96,
+    "nfe": 64,
     "whisper_model_language": "multilingual",
-    "whisper_model_size": "large",
-    "whisper_language": "original"
+    "whisper_model_size": "base",
+    "whisper_language": "original",
+    "silero_sample_rate": 24000,
+    "use_llm_for_ssml": false,
+    "tts_language": "en",
+    "num_inference_steps": 28,
+    "guidance_scale": 7,
+    "num_images": 1,
+    "width": 1024,
+    "height": 1024,
+    "image_format": "png",
+    "ollama_url": "http://192.168.1.70:11434/api/generate"
 }
