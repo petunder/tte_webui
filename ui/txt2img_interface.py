@@ -1,3 +1,4 @@
+# text2image_interface.py
 import gradio as gr
 from modules.txt2img_processor import generate_images
 from modules.settings_processor import get_all_settings
@@ -47,10 +48,17 @@ def create_text2image_interface():
                     object_fit="contain",
                     height="auto"
                 )
+        def display_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height,
+                           image_format):
+            image_paths = generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images,
+                                          width, height, image_format)
+            return [gr.Image.update(path=path) for path in image_paths]
 
         generate_btn.click(
-            generate_images,
-            inputs=[prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height, image_format],
+            
+            display_images,
+            inputs=[prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height,
+                    image_format],
             outputs=gallery
         )
         def update():
