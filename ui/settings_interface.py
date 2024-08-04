@@ -80,6 +80,10 @@ def create_settings_interface():
                     height = gr.Slider(minimum=256, maximum=2048, step=64, value=512, label="Image Height")
                     image_format = gr.Radio(["png", "jpg"], label="Image Format", value="png")
         with gr.Row():
+            with gr.Group():
+                gr.Markdown("## Ollama IP Settings")
+                ollama_ip_key = gr.Textbox(label="Ollama IP key", placeholder="Enter ollama IP here")
+        with gr.Row():
             save_button = gr.Button("Save Changes")
             reset_button = gr.Button("Reset to Default")
         
