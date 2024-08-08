@@ -61,7 +61,7 @@ TTE (Text to Everything) WebUI is a web-based interface for generating and proce
 1. Start the application by running `python app.py`.
 2. Open your web browser and navigate to `http://localhost:7861`.
 3. Interact with the UI to generate text-based outputs.
-   *In order to use TogetherAI you need to register on https://api.together.ai/ and save your personal API key
+* *In order to use TogetherAI you need to register on https://api.together.ai/ and save your personal API key
 
 ## Contributing
 
