@@ -8,7 +8,7 @@
     "solver": "euler",
     "nfe": 64,
     "whisper_model_language": "multilingual",
-    "whisper_model_size": "base",
+    "whisper_model_size": "tiny",
     "whisper_language": "original",
     "silero_sample_rate": 24000,
     "use_llm_for_ssml": false,
@@ -19,5 +19,9 @@
     "width": 1024,
     "height": 1024,
     "image_format": "png",
-    "ollama_url": "http://192.168.1.70:11434/api/generate"
+    "provider": "ollama",
+    "ollama_model": "aya:35b-23-q8_0",
+    "ollama_url": "http://192.168.1.70:11434/api/generate",
+    "togetherai_model": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+    "together_api_key": "5fd634dc19ca85198db4f791406edfd24cc961a7eff718ee30a3b7a6d010c292"
 }
