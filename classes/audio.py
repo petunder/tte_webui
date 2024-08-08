@@ -8,7 +8,9 @@ import numpy as np
 import whisper
 from classes.text import Text
 import json
-
+from llm.providers.together import process_chunk as together_process_chunk
+from classes.settings import Settings
+settings = Settings()
 class Audio:
     def __init__(self, input_audio):
         self.temp_dir = "/tmp/resemble-enhance"
@@ -262,37 +264,49 @@ class Audio:
             transcribe_options["task"] = "translate"
         
         result = model.transcribe(self.temp_file, **transcribe_options)
-        PROVIDER = "ollama"
-        LLM_MODEL = "aya:35b-23-q8_0"
-        LLM_SYSTEM_PROMPT = """You are an experienced editor tasked with improving a given text. Your goal is to correct errors and enhance readability while staying close to the original text and preserving its initial meaning.
-        Follow these steps to edit the text:
-        Carefully read through the text and identify any grammatical, spelling, or punctuation errors. Correct these errors while maintaining the original word choice as much as possible.
-
-        Improve the readability of the text by:
-        a. Breaking up overly long sentences into shorter, clearer ones.
-        b. Rearranging words or phrases for better flow and clarity.
-        c. Replacing unclear or awkward phrasing with more natural alternatives.
-
-        d. Ensuring consistent tense usage throughout the text.
-        While making these improvements, be careful to preserve the original meaning and style of the text. Do not add new information or change the author's intent.
-        If you encounter any specialized terminology or proper nouns, assume they are correct unless there is an obvious spelling error.
-        After editing, review your changes to ensure they enhance the text without altering its core message or tone.
-
-        Provide your edited version of the text within <edited_text> tags. Do not include any explanations, comments, or lists of changes made.
-        Remember, your goal is to improve the text while keeping it as close to the original as possible. Make only necessary changes to correct errors and enhance readability.
-        IMPORTANT: Always respond in the language of the original text. Do not translate or switch to any other language under any circumstances.
-        Here is the original text you will be working with:
-
-        """
-        LLM_CHUNK_SIZE = 600
         text = result["text"]
-        text_processor = Text()
-        edited_text = text_processor.enhance_text(
-            text,
-            LLM_MODEL,
-            LLM_SYSTEM_PROMPT
+        PROVIDER  = settings.get_setting('provider')
+        if PROVIDER == "ollama":
+            LLM_MODEL = settings.get_setting('ollama_model')
+            LLM_SYSTEM_PROMPT = """You are an experienced editor tasked with improving a given text. Your goal is to correct errors and enhance readability while staying close to the original text and preserving its initial meaning.
+            Follow these steps to edit the text:
+            Carefully read through the text and identify any grammatical, spelling, or punctuation errors. Correct these errors while maintaining the original word choice as much as possible.
+
+            Improve the readability of the text by:
+            a. Breaking up overly long sentences into shorter, clearer ones.
+            b. Rearranging words or phrases for better flow and clarity.
+            c. Replacing unclear or awkward phrasing with more natural alternatives.
+
+            d. Ensuring consistent tense usage throughout the text.
+            While making these improvements, be careful to preserve the original meaning and style of the text. Do not add new information or change the author's intent.
+            If you encounter any specialized terminology or proper nouns, assume they are correct unless there is an obvious spelling error.
+            After editing, review your changes to ensure they enhance the text without altering its core message or tone.
+
+            Provide your edited version of the text within <edited_text> tags. Do not include any explanations, comments, or lists of changes made.
+            Remember, your goal is to improve the text while keeping it as close to the original as possible. Make only necessary changes to correct errors and enhance readability.
+            IMPORTANT: Always respond in the language of the original text. Do not translate or switch to any other language under any circumstances.
+            Here is the original text you will be working with:
+
+            """
+            LLM_CHUNK_SIZE = 600
+            #text = result["text"]
+            text_processor = Text()
+            edited_text = text_processor.enhance_text(
+                text,
+                LLM_MODEL,
+                LLM_SYSTEM_PROMPT
         )
-        
+        elif PROVIDER == "together":
+            os.environ['TOGETHER_API_KEY'] = settings.get_setting('together_api_key')
+            model=settings.get_setting('togetherai_model')
+            # Вызовем TogetherAI API для обработки текста
+            edited_text = together_process_chunk(
+                text)
+        else:
+            # Если указанный провайдер не поддерживается, вернуть оригинальный текст
+            print(f"Provider '{PROVIDER}' is not supported. Returning original text.")
+            edited_text = text
+        # Дополнительные обработки для получения других форматов вывода
         timestamp_view = self.whisper_to_timestamp_view(result)
         timestamp_table = self.whisper_to_timestamp_table(result)
         json_output = self.whisper_to_json(result)
@@ -387,4 +401,3 @@ class Audio:
 #            os.remove(self.temp_file)
 #        shutil.rmtree(os.path.dirname(self.temp_file))
 #        print(f"Temporary directory and file {self.temp_file} have been deleted.")
-
