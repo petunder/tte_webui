@@ -1,14 +1,11 @@
 import requests
 import logging
-#from configparser import ConfigParser
 from classes.settings import Settings  # Импорт класса Settings
 
 logger = logging.getLogger(__name__)
-
-# Создайте экземпляр класса Settings
 settings = Settings()
-# Извлеките URL из настроек
 ollama_url = settings.get_setting('ollama_url')
+model = settings.get_setting('ollama_model')
 
 def process_chunk(chunk, model, system_prompt=None, temperature=0.3, top_k=40, top_p=0.9, repeat_penalty=1.2, max_tokens=2048):
     logger.debug(f"Sending request to Ollama API. Chunk length: {len(chunk)}")
