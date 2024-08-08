@@ -2,6 +2,8 @@ import gradio as gr
 from modules.audio_processor import process_audio
 from modules.settings_processor import get_all_settings
 from modules.transcription_processor import transcribe_audio
+from classes.settings import Settings
+
 
 def create_combined_interface():
     def load_current_settings():
@@ -163,15 +165,18 @@ def create_combined_interface():
     # Транскрипция
             if transcription_selected:
                 transcription_output, edited_transcription_output, timestamp_view, timestamp_table, json_output, json_raw_output, transcription_log = transcribe_audio(
-                    audio_file, model_language, model_size, language
-                )
+                    audio_file, model_language, model_size, language)
                 log.append(transcription_log)
             
     
             return output_audio, "\n".join(log), transcription_output, edited_transcription_output, timestamp_view, timestamp_table, json_output, json_raw_output
-
+        
 # Вызов функции при нажатии кнопки
+        
         submit_button.click(
+            
+            
+            
             fn=handle_audio_processing,
             inputs=[file_input, change_sample_rate, new_sample_rate, to_mono, apply_filter, filter_choices, 
                 remove_silence, silence_duration, silence_threshold, audio_processing, lambd, tau, solver, 
