@@ -26,9 +26,16 @@ class Settings:
             'width': 1024,
             'height': 1024,
             'image_format': 'png',
-            'ollama_url': 'http://192.168.1.70:11434/api/generate'
+            'provider': 'ollama',  # Новый параметр выбора провайдера
+            'ollama_model':'aya:35b-23-q8_0',
+            'ollama_url': 'http://192.168.1.70:11434/api/generate',
+            'togetherai_model': 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',  # Модель для TogetherAI
+            'together_api_key': ''
         }
         self.load_settings()
+
+    # Остальной код без изменений
+
 
     def load_settings(self):
         if os.path.exists(self.settings_file):
