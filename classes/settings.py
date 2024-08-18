@@ -30,7 +30,9 @@ class Settings:
             'ollama_model':'aya:35b-23-q8_0',
             'ollama_url': 'http://192.168.1.70:11434/api/generate',
             'togetherai_model': 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',  # Модель для TogetherAI
-            'together_api_key': ''
+            'together_api_key': '',
+            'groq_model':'llama3-8b-8192',
+            'groq_api_key': ''
         }
         self.load_settings()
 
