@@ -50,6 +50,10 @@ def transcribe_audio(audio_input, model_language, model_size, language):
         log.append(f"Transcribing with Ollama (model: {model_language}.{model_size}, language: {language})...")
         # Используем Ollama API для транскрипции
         text, edited_text, timestamp_view, timestamp_table, json_output, json_raw = audio.transcribe(model_language, model_size, language)
+    elif provider == 'groq':
+        log.append(f"Transcribing with Groq (model: {model_language}.{model_size}, language: {language})...")
+        # Используем Groq API для транскрипции
+        text, edited_text, timestamp_view, timestamp_table, json_output, json_raw = audio.transcribe(model_language, model_size, language)
     else:
         log.append("Error: Unknown provider selected.")
         return None, None, None, None, None, None, "\n".join(log)
