@@ -7,6 +7,9 @@ import langid
 import os
 import subprocess
 import json
+from llm.providers.together import process_chunk 
+from llm.providers.groq import improve_text 
+
 
 class LLM(ABC):
     @abstractmethod
@@ -14,9 +17,16 @@ class LLM(ABC):
         pass
 
 class Text:
+    def _initialize_llm(self, provider):
+        if provider == "ollama":
+            return OllamaLLM()
+        elif provider == "together":
+            return TogetherLLM()
+        else:
+            raise ValueError(f"Unsupported provider: {provider}")
     def __init__(self, provider="ollama"):
         self.provider = provider
-        self.llm = OllamaLLM()
+        self.llm = self._initialize_llm(provider)
         logging.basicConfig(level=logging.DEBUG)
         self.logger = logging.getLogger(__name__)
         self.language = None
@@ -143,3 +153,49 @@ class OllamaLLM(LLM):
         except Exception as e:
             logger.error(f"Error processing chunk with Ollama: {e}")
             return chunk
+class TogetherLLM(LLM):
+    def process_chunk(self, chunk, model, system_prompt, temperature, top_k, top_p, repeat_penalty, max_tokens):
+        logger = logging.getLogger(__name__)
+        logger.debug(f"Processing chunk with Together. Chunk length: {len(chunk)}")
+        try:
+            # Импортируйте библиотеку или используйте API для работы с Together.
+            from llm.providers import together
+            result = together.process_chunk(
+                chunk=chunk,
+                model=model,
+                system_prompt=system_prompt,
+                temperature=temperature,
+                top_k=top_k,
+                top_p=top_p,
+                repeat_penalty=repeat_penalty,
+                max_tokens=max_tokens
+            )
+            logger.debug(f"Chunk processed successfully. Result length: {len(result)}")
+            return result
+        except Exception as e:
+            logger.error(f"Error processing chunk with Together: {e}")
+            return chunk
+
+class GROQLLM(LLM):
+    def process_chunk(self, chunk, model, system_prompt, temperature, top_k, top_p, repeat_penalty, max_tokens):
+        logger = logging.getLogger(__name__)
+        logger.debug(f"Processing chunk with Groq. Chunk length: {len(chunk)}")
+        try:
+            # Импортируйте библиотеку или используйте API для работы с Together.
+            from llm.providers import groq
+            result = groq.improve_text(
+                chunk=chunk,
+                model=model,
+                system_prompt=system_prompt,
+                temperature=temperature,
+                top_k=top_k,
+                top_p=top_p,
+                repeat_penalty=repeat_penalty,
+                max_tokens=max_tokens
+            )
+            logger.debug(f"Chunk processed successfully. Result length: {len(result)}")
+            return result
+        except Exception as e:
+            logger.error(f"Error processing chunk with Groq: {e}")
+            return chunk
+
