@@ -93,6 +93,7 @@ def create_settings_interface():
             with gr.Group():
                 gr.Markdown("## Provider Settings")
                 provider = gr.Radio(label="#Provider", choices=["ollama", "together", "groq"])
+                
 
             # Ollama settings (shown only when "ollama" is selected)
                 settings=Settings()
@@ -133,7 +134,7 @@ def create_settings_interface():
                         elif settings.get_setting('provider')=="ollama":
                             groq_model = gr.Textbox(label="GroqAI Model", placeholder="Enter model name", value="llama3-8b-8192", visible=False)
                             groq_api_key = gr.Textbox(label="GroqAI API Key", placeholder="Enter your API key", value="", visible=False)
-                        elif settings.get_setting('provider')=="groq":
+                        elif settings.get_setting('provider')=="together":
                             groq_model = gr.Textbox(label="GroqAI Model", placeholder="Enter model name", value="llama3-8b-8192", visible=False)
                             groq_api_key = gr.Textbox(label="GroqAI API Key", placeholder="Enter your API key", value="", visible=False)
 
