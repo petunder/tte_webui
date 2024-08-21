@@ -200,7 +200,7 @@ def create_settings_interface():
                 'groq_model': groq_model,
                 'groq_api_key': groq_api_key,
                 'transcription_provider': transcription_provider,
-                'resemble_enhance_path': resemble_enhance_path  # Новое поле
+                'resemble_enhance_path': resemble_enhance_path
             }
             update_settings(new_settings)
             return "Settings saved successfully!"
@@ -236,6 +236,7 @@ def create_settings_interface():
                 new_settings['groq_model'],
                 new_settings['groq_api_key'],
                 new_settings['transcription_provider'],
+                new_settings['resemble_enhance_path']
                 "Settings reset to default values!"
             )
 
@@ -251,7 +252,7 @@ def create_settings_interface():
             reset_to_default,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, result]
+                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, resemble_enhance_path, result]
         )
 
         # Load current settings on interface initialization

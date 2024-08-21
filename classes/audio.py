@@ -80,11 +80,11 @@ class Audio:
         if resemble_enhance_path is None:
             resemble_enhance_path = settings.get_setting('resemble_enhance_path')
 
+        output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
+
         if not resemble_enhance_path:
             output_callback("Error: resemble-enhance not found in system path or settings.\n")
             return
-
-        output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
 
         command_denoise = [
             resemble_enhance_path,
@@ -151,11 +151,11 @@ class Audio:
         if resemble_enhance_path is None:
             resemble_enhance_path = settings.get_setting('resemble_enhance_path')
 
+        output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
+
         if not resemble_enhance_path:
             output_callback("Error: resemble-enhance not found in system path or settings.\n")
             return
-
-        output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
 
         command_enhance = [
             resemble_enhance_path,
