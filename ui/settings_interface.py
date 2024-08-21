@@ -236,7 +236,7 @@ def create_settings_interface():
                 new_settings['groq_model'],
                 new_settings['groq_api_key'],
                 new_settings['transcription_provider'],
-                new_settings['resemble_enhance_path']
+                new_settings['resemble_enhance_path'],
                 "Settings reset to default values!"
             )
 
