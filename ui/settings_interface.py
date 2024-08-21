@@ -3,6 +3,7 @@ from modules.settings_processor import get_all_settings, update_settings, reset_
 from modules.text2voice_processor import get_available_languages
 from classes.settings import Settings
 
+
 def create_settings_interface():
     available_languages = get_available_languages()
     sample_rate_choices = [8000, 16000, 24000, 48000]
@@ -37,12 +38,13 @@ def create_settings_interface():
             current_settings['together_api_key'],
             current_settings['groq_model'],
             current_settings['groq_api_key'],
-            current_settings['transcription_provider']
+            current_settings['transcription_provider'],
+            current_settings.get('resemble_enhance_path', '')
         )
 
     with gr.Blocks() as settings_interface:
         gr.Markdown("# Settings")
-        
+
         with gr.Row():
             with gr.Column():
                 with gr.Group():
@@ -64,6 +66,7 @@ def create_settings_interface():
                     tau = gr.Slider(minimum=0.0, maximum=1.0, step=0.1, label="Default CFM Prior Temperature (tau)")
                     solver = gr.Dropdown(label="Default Numerical Solver", choices=["midpoint", "rk4", "euler"])
                     nfe = gr.Slider(minimum=0, maximum=128, step=1, label="Default Number of Function Evaluations (NFE)")
+                    resemble_enhance_path = gr.Textbox(label="Resemble Enhance Path", placeholder="Enter path for Resemble enhancement")
 
             with gr.Column():
                 with gr.Group():
@@ -167,7 +170,7 @@ def create_settings_interface():
 
         def save_changes(sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe, 
                          whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider):
+                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, resemble_enhance_path):
             new_settings = {
                 'sample_rate': sample_rate,
                 'file_format': file_format,
@@ -196,7 +199,8 @@ def create_settings_interface():
                 'together_api_key': together_api_key,
                 'groq_model': groq_model,
                 'groq_api_key': groq_api_key,
-                'transcription_provider': transcription_provider
+                'transcription_provider': transcription_provider,
+                'resemble_enhance_path': resemble_enhance_path  # Новое поле
             }
             update_settings(new_settings)
             return "Settings saved successfully!"
@@ -239,7 +243,7 @@ def create_settings_interface():
             save_changes,
             inputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider],
+                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, resemble_enhance_path],
             outputs=result
         )
         
@@ -254,8 +258,11 @@ def create_settings_interface():
         settings_interface.load(
             load_current_settings,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
-                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider]
+                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml,
+                     tts_language,
+                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider,
+                     ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key,
+                     transcription_provider, resemble_enhance_path]
         )
 
     return settings_interface
