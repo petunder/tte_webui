@@ -11,9 +11,10 @@ import json
 from llm.providers.together import process_chunk as together_process_chunk
 from llm.providers.groq import improve_text as groq_process_chunk
 from classes.settings import Settings
-settings = Settings()
+#settings = Settings()
 class Audio:
     def __init__(self, input_audio):
+        self.settings = Settings()
         self.temp_dir = "/tmp/resemble-enhance"
         self.temp_file = self._create_temp_file(input_audio)
         self.sample_rate = input_audio[0]
@@ -78,7 +79,7 @@ class Audio:
 
         resemble_enhance_path = shutil.which("resemble-enhance")
         if resemble_enhance_path is None:
-            resemble_enhance_path = settings.get_setting('resemble_enhance_path')
+            resemble_enhance_path = self.settings.get_setting('resemble_enhance_path')
 
         output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
 
@@ -150,8 +151,8 @@ class Audio:
         resemble_enhance_path = shutil.which("resemble-enhance")
         output_callback(f"resemble-enhance path from shutil: {shutil.which('resemble-enhance')}\n")
         if resemble_enhance_path is None:
-            resemble_enhance_path = settings.get_setting('resemble_enhance_path')
-            output_callback(f"resemble-enhance path from settings: {settings.get_setting('resemble_enhance_path')}\n")
+            resemble_enhance_path = self.settings.get_setting('resemble_enhance_path')
+            output_callback(f"resemble-enhance path from settings: {self.settings.get_setting('resemble_enhance_path')}\n")
 
         output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
 
@@ -274,9 +275,9 @@ class Audio:
         
         result = model.transcribe(self.temp_file, **transcribe_options)
         text = result["text"]
-        PROVIDER  = settings.get_setting('provider')
+        PROVIDER  = self.settings.get_setting('provider')
         if PROVIDER == "ollama":
-            LLM_MODEL = settings.get_setting('ollama_model')
+            LLM_MODEL = self.settings.get_setting('ollama_model')
             LLM_SYSTEM_PROMPT = """You are an experienced editor tasked with improving a given text. Your goal is to correct errors and enhance readability while staying close to the original text and preserving its initial meaning.
             Follow these steps to edit the text:
             Carefully read through the text and identify any grammatical, spelling, or punctuation errors. Correct these errors while maintaining the original word choice as much as possible.
@@ -306,14 +307,14 @@ class Audio:
                 LLM_SYSTEM_PROMPT
         )
         elif PROVIDER == "together":
-            os.environ['TOGETHER_API_KEY'] = settings.get_setting('together_api_key')
-            model=settings.get_setting('togetherai_model')
+            os.environ['TOGETHER_API_KEY'] = self.settings.get_setting('together_api_key')
+            model=self.settings.get_setting('togetherai_model')
             # Вызовем TogetherAI API для обработки текста
             edited_text = together_process_chunk(
                 text)
         elif PROVIDER == "groq":
-            os.environ['GROQ_API_KEY'] = settings.get_setting('groq_api_key')
-            model_name = settings.get_setting('groq_model')
+            os.environ['GROQ_API_KEY'] = self.settings.get_setting('groq_api_key')
+            model_name = self.settings.get_setting('groq_model')
             edited_text = groq_process_chunk(text)
         else:
             # Если указанный провайдер не поддерживается, вернуть оригинальный текст
