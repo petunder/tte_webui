@@ -36,7 +36,8 @@ def create_settings_interface():
             current_settings['togetherai_model'],
             current_settings['together_api_key'],
             current_settings['groq_model'],
-            current_settings['groq_api_key']
+            current_settings['groq_api_key'],
+            current_settings['transcription_provider']
         )
 
     with gr.Blocks() as settings_interface:
@@ -70,6 +71,7 @@ def create_settings_interface():
                     whisper_model_language = gr.Radio(label="Model Language", choices=["multilingual", "english-only"], value="multilingual")
                     whisper_model_size = gr.Radio(label="Model Size", choices=["tiny", "base", "small", "medium", "large"], value="base")
                     whisper_language = gr.Radio(label="Transcription Language", choices=["original", "english"], value="original")
+                    transcription_provider = gr.Radio(label="Transcription Provider", choices=["ollama", "groq"])
 
         with gr.Row():
             with gr.Column():
@@ -165,7 +167,7 @@ def create_settings_interface():
 
         def save_changes(sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe, 
                          whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key):
+                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider):
             new_settings = {
                 'sample_rate': sample_rate,
                 'file_format': file_format,
@@ -193,7 +195,8 @@ def create_settings_interface():
                 'togetherai_model': togetherai_model,
                 'together_api_key': together_api_key,
                 'groq_model': groq_model,
-                'groq_api_key': groq_api_key
+                'groq_api_key': groq_api_key,
+                'transcription_provider': transcription_provider
             }
             update_settings(new_settings)
             return "Settings saved successfully!"
@@ -228,6 +231,7 @@ def create_settings_interface():
                 new_settings['together_api_key'],
                 new_settings['groq_model'],
                 new_settings['groq_api_key'],
+                new_settings['transcription_provider'],
                 "Settings reset to default values!"
             )
 
@@ -235,7 +239,7 @@ def create_settings_interface():
             save_changes,
             inputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key],
+                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider],
             outputs=result
         )
         
@@ -243,7 +247,7 @@ def create_settings_interface():
             reset_to_default,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, result]
+                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, result]
         )
 
         # Load current settings on interface initialization
@@ -251,7 +255,7 @@ def create_settings_interface():
             load_current_settings,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key]
+                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider]
         )
 
     return settings_interface
