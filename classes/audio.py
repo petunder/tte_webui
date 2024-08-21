@@ -78,7 +78,10 @@ class Audio:
 
         resemble_enhance_path = shutil.which("resemble-enhance")
         if resemble_enhance_path is None:
-            output_callback("Error: resemble-enhance not found in system path.\n")
+            resemble_enhance_path = settings.get_setting('resemble_enhance_path')
+
+        if not resemble_enhance_path:
+            output_callback("Error: resemble-enhance not found in system path or settings.\n")
             return
 
         output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")
@@ -146,7 +149,10 @@ class Audio:
 
         resemble_enhance_path = shutil.which("resemble-enhance")
         if resemble_enhance_path is None:
-            output_callback("Error: resemble-enhance not found in system path.\n")
+            resemble_enhance_path = settings.get_setting('resemble_enhance_path')
+
+        if not resemble_enhance_path:
+            output_callback("Error: resemble-enhance not found in system path or settings.\n")
             return
 
         output_callback(f"resemble-enhance path: {resemble_enhance_path}\n")

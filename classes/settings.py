@@ -32,12 +32,10 @@ class Settings:
             'togetherai_model': 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',  # Модель для TogetherAI
             'together_api_key': '',
             'groq_model':'llama3-8b-8192',
-            'groq_api_key': ''
+            'groq_api_key': '',
+            'resemble_enhance_path': ''
         }
         self.load_settings()
-
-    # Остальной код без изменений
-
 
     def load_settings(self):
         if os.path.exists(self.settings_file):
