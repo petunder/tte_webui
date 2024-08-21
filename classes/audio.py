@@ -148,7 +148,7 @@ class Audio:
         os.makedirs(output_dir, exist_ok=True)
 
         resemble_enhance_path = shutil.which("resemble-enhance")
-        output_callback(f"resemble-enhance path from shutil: {shutil.which("resemble-enhance")}\n")
+        output_callback(f"resemble-enhance path from shutil: {shutil.which(\"resemble-enhance\")}\n")
         if resemble_enhance_path is None:
             resemble_enhance_path = settings.get_setting('resemble_enhance_path')
             output_callback(f"resemble-enhance path from settings: {settings.get_setting('resemble_enhance_path')}\n")
