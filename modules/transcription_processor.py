@@ -8,7 +8,7 @@ import os
 from llm.providers.groq import improve_text as groq_process_chunk
 from llm.providers.together import process_chunk as together_process_chunk
 from llm.providers.ollama import process_chunk as ollama_process_chunk
-
+from llm.providers.openAI import improve_text as openAI_process_chunk
 
 def transcribe_audio(audio_input, model_language, model_size, language):
     #settings=Settings()
@@ -57,7 +57,8 @@ def transcribe_audio(audio_input, model_language, model_size, language):
         text, edited_text, timestamp_view, timestamp_table, json_output, json_raw = audio.transcribe(model_language, model_size, language)
     elif provider == "groq":
         log.append(f"Transcribing with Groq (model: {model_language}.{model_size}, language: {language})...")
-        
+    
+
 
     # Установите соединение с Groq
         client = Groq()
@@ -71,12 +72,12 @@ def transcribe_audio(audio_input, model_language, model_size, language):
                 file=(filename, file.read()),
                 model="whisper-large-v3",
                 prompt="Specify context or spelling",  # Опционально
-                response_format="verbose_json",  # Опционально
+                response_format="text",  # Опционально
                 language="",  # Опционально
                 temperature=0.0  # Опционально
         )
             
-            text = response.text
+            text = response
             
             if PROVIDER=="groq":
                 edited_text = groq_process_chunk(text)
@@ -86,6 +87,9 @@ def transcribe_audio(audio_input, model_language, model_size, language):
             elif PROVIDER=="ollama":
                 model = settings.get_setting('ollama_model')
                 edited_text = ollama_process_chunk(text, model)
+            elif PROVIDER == "openAI":
+                edited_text = openAI_process_chunk(text)
+                
             
             
 #             
