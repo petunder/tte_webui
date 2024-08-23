@@ -10,6 +10,7 @@ from classes.text import Text
 import json
 from llm.providers.together import process_chunk as together_process_chunk
 from llm.providers.groq import improve_text as groq_process_chunk
+from llm.providers.openAI import improve_text as openAI_process_chunk
 from classes.settings import Settings
 #settings = Settings()
 class Audio:
@@ -316,6 +317,11 @@ class Audio:
             os.environ['GROQ_API_KEY'] = self.settings.get_setting('groq_api_key')
             model_name = self.settings.get_setting('groq_model')
             edited_text = groq_process_chunk(text)
+        elif PROVIDER == "openAI":
+            os.environ['OPENAI_API_KEY'] = self.settings.get_setting('openAI_api_key')
+            model_name = self.settings.get_setting('openAI_model')
+            edited_text = openAI_process_chunk(text)
+            
         else:
             # Если указанный провайдер не поддерживается, вернуть оригинальный текст
             print(f"Provider '{PROVIDER}' is not supported. Returning original text.")
