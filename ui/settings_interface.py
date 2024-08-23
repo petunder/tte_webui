@@ -38,6 +38,8 @@ def create_settings_interface():
             current_settings['together_api_key'],
             current_settings['groq_model'],
             current_settings['groq_api_key'],
+            current_settings['openAI_model'],
+            current_settings['openAI_api_key'],            
             current_settings['transcription_provider'],
             current_settings.get('resemble_enhance_path', '')
         )
@@ -97,7 +99,7 @@ def create_settings_interface():
         with gr.Row():
             with gr.Group():
                 gr.Markdown("## Provider Settings")
-                provider = gr.Radio(label="#Provider", choices=["ollama", "together", "groq"])
+                provider = gr.Radio(label="#Provider", choices=["ollama", "together", "groq", "openAI"])
                 
 
             # Ollama settings (shown only when "ollama" is selected)
@@ -114,6 +116,9 @@ def create_settings_interface():
                         elif settings.get_setting('provider')=="groq" :
                             ollama_model = gr.Textbox(label="Ollama model", placeholder="Enter ollama model name here", visible=False)
                             ollama_url = gr.Textbox(label="Ollama URL", placeholder="Enter ollama URL here", visible=False)
+                        elif settings.get_setting('provider')=="openAI":
+                            ollama_model = gr.Textbox(label="Ollama Model", placeholder="Enter model name", value="llama 3.1 70b", visible=False)
+                            ollama_url = gr.Textbox(label="Ollama URL", placeholder="Enter your API key", value="", visible=False)
 
 
             # TogetherAI settings (shown only when "together" is selected)
@@ -129,6 +134,10 @@ def create_settings_interface():
                         elif settings.get_setting('provider')=="groq":
                             togetherai_model = gr.Textbox(label="TogetherAI Model", placeholder="Enter model name", value="llama 3.1 70b", visible=False)
                             together_api_key = gr.Textbox(label="TogetherAI API Key", placeholder="Enter your API key", value="", visible=False)
+                        elif settings.get_setting('provider')=="openAI":
+                            togetherai_model = gr.Textbox(label="TogetherAI Model", placeholder="Enter model name", value="llama 3.1 70b", visible=False)
+                            together_api_key = gr.Textbox(label="TogetherAI API Key", placeholder="Enter your API key", value="", visible=False)
+
 
                 with gr.Column():
                     with gr.Group():
@@ -142,24 +151,43 @@ def create_settings_interface():
                         elif settings.get_setting('provider')=="together":
                             groq_model = gr.Textbox(label="GroqAI Model", placeholder="Enter model name", value="llama3-8b-8192", visible=False)
                             groq_api_key = gr.Textbox(label="GroqAI API Key", placeholder="Enter your API key", value="", visible=False)
-
+                        elif settings.get_setting('provider')=="openAI":
+                            groq_model = gr.Textbox(label="TogetherAI Model", placeholder="Enter model name", value="llama 3.1 70b", visible=False)
+                            groq_api_key = gr.Textbox(label="TogetherAI API Key", placeholder="Enter your API key", value="", visible=False)
+                with gr.Column():
+                    with gr.Group():
+                        if settings.get_setting('provider')=="openAI":
+                            
+                            openAI_model = gr.Textbox(label="OpenAI Model", placeholder="Enter model name", value="llama3-8b-8192", visible=True)
+                            openAI_api_key = gr.Textbox(label="OpenAI API Key", placeholder="Enter your API key", value="", visible=True)
+                        elif settings.get_setting('provider')=="ollama":
+                            openAI_model = gr.Textbox(label="GroqAI Model", placeholder="Enter model name", value="llama3-8b-8192", visible=False)
+                            openAI_api_key = gr.Textbox(label="GroqAI API Key", placeholder="Enter your API key", value="", visible=False)
+                        elif settings.get_setting('provider')=="together":
+                            openAI_model = gr.Textbox(label="GroqAI Model", placeholder="Enter model name", value="llama3-8b-8192", visible=False)
+                            openAI_api_key = gr.Textbox(label="GroqAI API Key", placeholder="Enter your API key", value="", visible=False)
+                        elif settings.get_setting('provider')=="groq":
+                            openAI_model = gr.Textbox(label="OpenAI Model", placeholder="Enter model name", value="llama 3.1 70b", visible=False)
+                            openAI_api_key = gr.Textbox(label="OpenAI API Key", placeholder="Enter your API key", value="", visible=False)
 
                             
         # Function to update the visibility of provider-specific settings
         def toggle_provider_settings(provider_choice):
             if provider_choice == "ollama":
-                return gr.update(visible=True), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
+                return gr.update(visible=True), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
             elif provider_choice == "together":
-                return gr.update(visible=False), gr.update(visible=False),  gr.update(visible=True), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
+                return gr.update(visible=False), gr.update(visible=False),  gr.update(visible=True), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
             elif provider_choice == "groq":
-                return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=True)
+                return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
+            elif provider_choice == "openAI":
+                return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=True)
             else:
-                return gr.update(visible=False),gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False),gr.update(visible=False)
+                return gr.update(visible=False),gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False),gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
         
         provider.change(
             fn=toggle_provider_settings,
             inputs=provider,
-            outputs=[ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key]
+            outputs=[ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key]
         )
         
         with gr.Row():
@@ -170,7 +198,7 @@ def create_settings_interface():
 
         def save_changes(sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe, 
                          whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, resemble_enhance_path):
+                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path):
             new_settings = {
                 'sample_rate': sample_rate,
                 'file_format': file_format,
@@ -199,6 +227,8 @@ def create_settings_interface():
                 'together_api_key': together_api_key,
                 'groq_model': groq_model,
                 'groq_api_key': groq_api_key,
+                'openAI_model': openAI_model,
+                'openAI_api_key': openAI_api_key,
                 'transcription_provider': transcription_provider,
                 'resemble_enhance_path': resemble_enhance_path
             }
@@ -235,6 +265,8 @@ def create_settings_interface():
                 new_settings['together_api_key'],
                 new_settings['groq_model'],
                 new_settings['groq_api_key'],
+                new_settings['openAI_model'],
+                new_settings['openAI_api_key'],
                 new_settings['transcription_provider'],
                 new_settings['resemble_enhance_path'],
                 "Settings reset to default values!"
@@ -244,7 +276,7 @@ def create_settings_interface():
             save_changes,
             inputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, resemble_enhance_path],
+                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path],
             outputs=result
         )
         
@@ -252,7 +284,7 @@ def create_settings_interface():
             reset_to_default,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, transcription_provider, resemble_enhance_path, result]
+                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path, result]
         )
 
         # Load current settings on interface initialization
@@ -262,7 +294,7 @@ def create_settings_interface():
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml,
                      tts_language,
                      num_inference_steps, guidance_scale, num_images, width, height, image_format, provider,
-                     ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key,
+                     ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key,
                      transcription_provider, resemble_enhance_path]
         )
 
