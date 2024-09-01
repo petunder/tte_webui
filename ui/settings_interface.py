@@ -25,8 +25,12 @@ def create_settings_interface():
             current_settings['silero_sample_rate'],
             current_settings['use_llm_for_ssml'],
             current_settings['tts_language'],
-            current_settings['num_inference_steps'],
-            current_settings['guidance_scale'],
+            current_settings['num_inference_steps_sd3'],
+            current_settings['num_inference_steps_flux1-dev'],
+            current_settings['num_inference_steps_flux1-schnell'],
+            current_settings['guidance_scale_sd3'],
+            current_settings['guidance_scale_flux1-dev'],
+            current_settings['guidance_scale_flux1-schnell'],
             current_settings['num_images'],
             current_settings['width'],
             current_settings['height'],
@@ -41,7 +45,8 @@ def create_settings_interface():
             current_settings['openAI_model'],
             current_settings['openAI_api_key'],            
             current_settings['transcription_provider'],
-            current_settings.get('resemble_enhance_path', '')
+            current_settings.get('resemble_enhance_path', ''),
+            current_settings['txt2img_provider']
         )
 
     with gr.Blocks() as settings_interface:
@@ -89,12 +94,40 @@ def create_settings_interface():
             with gr.Column():
                 with gr.Group():
                     gr.Markdown("## Text to Image Settings")
-                    num_inference_steps = gr.Slider(minimum=1, maximum=100, step=1, value=28, label="Number of Inference Steps")
-                    guidance_scale = gr.Slider(minimum=1, maximum=20, step=0.1, value=7.0, label="Guidance Scale")
-                    num_images = gr.Slider(minimum=1, maximum=9, step=1, value=1, label="Number of Images to Generate")
-                    width = gr.Slider(minimum=256, maximum=2048, step=64, value=512, label="Image Width")
-                    height = gr.Slider(minimum=256, maximum=2048, step=64, value=512, label="Image Height")
-                    image_format = gr.Radio(["png", "jpg"], label="Image Format", value="png")
+                    settings = Settings()
+                    txt2img_provider = gr.Radio(label="Provider", choices=["SD3", "Flux.1-DEV", "Flux.1-SCHNELL"])
+                    num_inference_steps_sd3 = gr.Slider(minimum=1, maximum=100, step=1, label="Number of Inference Steps", visible=False)
+                    guidance_scale_sd3 = gr.Slider(minimum=1, maximum=20, step=0.1, label="Guidance Scale", visible=False)
+                    num_inference_steps_flux1_dev = gr.Slider(minimum=1, maximum=100, step=1, label="Number of Inference Steps", visible=False)
+                    guidance_scale_flux1_dev = gr.Slider(minimum=1, maximum=20, step=0.1, label="Guidance Scale", visible=False)
+                    num_inference_steps_flux1_schnell = gr.Slider(minimum=1, maximum=100, step=1, label="Number of Inference Steps", visible=False)
+                    guidance_scale_flux1_schnell = gr.Slider(minimum=1, maximum=20, step=0.1, label="Guidance Scale", visible=False)
+                    num_images = gr.Slider(minimum=1, maximum=9, step=1, label="Number of Images to Generate")
+                    width = gr.Slider(minimum=256, maximum=2048, step=64, label="Image Width")
+                    height = gr.Slider(minimum=256, maximum=2048, step=64, label="Image Height")
+                    image_format = gr.Radio(["png", "jpg"], label="Image Format")
+            def toggle_txt2imgprovider_settings(txt2img_provider):
+                if txt2img_provider == "SD3":
+                    return (gr.update(visible=True), gr.update(visible=False), gr.update(visible=False),
+                    gr.update(visible=True), gr.update(visible=False), gr.update(visible=False),
+                    num_images, width, height, image_format)
+                elif txt2img_provider == "Flux.1-DEV":
+                    return (gr.update(visible=False), gr.update(visible=True), gr.update(visible=False),
+                    gr.update(visible=False), gr.update(visible=True), gr.update(visible=False),
+                    num_images, width, height, image_format)
+                elif txt2img_provider == "Flux.1-SCHNELL":
+                    return (gr.update(visible=False), gr.update(visible=False), gr.update(visible=True),
+                    gr.update(visible=False), gr.update(visible=False), gr.update(visible=True),
+                    num_images, width, height, image_format)            
+            txt2img_provider.change(
+                fn=toggle_txt2imgprovider_settings,
+                inputs=txt2img_provider,
+                outputs=[num_inference_steps_sd3, num_inference_steps_flux1_dev, num_inference_steps_flux1_schnell,
+                        guidance_scale_sd3, guidance_scale_flux1_dev, guidance_scale_flux1_schnell,
+                        num_images, width, height, image_format]
+                )
+
+                    
                     
         with gr.Row():
             with gr.Group():
@@ -183,13 +216,17 @@ def create_settings_interface():
                 return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=True)
             else:
                 return gr.update(visible=False),gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False),gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
-        
+
+            
         provider.change(
             fn=toggle_provider_settings,
             inputs=provider,
             outputs=[ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key]
         )
         
+
+        
+                
         with gr.Row():
             save_button = gr.Button("Save Changes")
             reset_button = gr.Button("Reset to Default")
@@ -198,7 +235,7 @@ def create_settings_interface():
 
         def save_changes(sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe, 
                          whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                         num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path):
+                         num_inference_steps_sd3, num_inference_steps_flux1_dev, num_inference_steps_flux1_schnell, guidance_scale_sd3, guidance_scale_flux1_dev, guidance_scale_flux1_schnell, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path, txt2img_provider):
             new_settings = {
                 'sample_rate': sample_rate,
                 'file_format': file_format,
@@ -214,8 +251,12 @@ def create_settings_interface():
                 'silero_sample_rate': silero_sample_rate,
                 'use_llm_for_ssml': use_llm_for_ssml,
                 'tts_language': tts_language,
-                'num_inference_steps': num_inference_steps,
-                'guidance_scale': guidance_scale,
+                'num_inference_steps_sd3': num_inference_steps_sd3,
+                'num_inference_steps_flux1-dev': num_inference_steps_flux1_dev,
+                'num_inference_steps_flux1-schnell': num_inference_steps_flux1_schnell,
+                'guidance_scale_sd3': guidance_scale_sd3,
+                'guidance_scale_flux1-dev': guidance_scale_flux1_dev,
+                'guidance_scale_flux1-schnell': guidance_scale_flux1_schnell,
                 'num_images': num_images,
                 'width': width,
                 'height': height,
@@ -230,12 +271,14 @@ def create_settings_interface():
                 'openAI_model': openAI_model,
                 'openAI_api_key': openAI_api_key,
                 'transcription_provider': transcription_provider,
-                'resemble_enhance_path': resemble_enhance_path
+                'resemble_enhance_path': resemble_enhance_path,
+                'txt2img_provider': txt2img_provider
             }
             update_settings(new_settings)
             return "Settings saved successfully!"
 
         def reset_to_default():
+            #default_settings = settings.get_default_settings_for_provider(txt2img_provider)
             new_settings = reset_settings()
             return (
                 new_settings['sample_rate'],
@@ -251,9 +294,13 @@ def create_settings_interface():
                 new_settings['whisper_language'],
                 new_settings['silero_sample_rate'],
                 new_settings['use_llm_for_ssml'],
-                new_settings['tts_language'],
-                new_settings['num_inference_steps'],
-                new_settings['guidance_scale'],
+                new_settings['tts_language'],             
+                new_settings['num_inference_steps_sd3'],
+                new_settings['num_inference_steps_flux1-dev'],
+                new_settings['num_inference_steps_flux1-schnell'],
+                new_settings['guidance_scale_sd3'],
+                new_settings['guidance_scale_flux1-dev'],
+                new_settings['guidance_scale_flux1-schnell'],
                 new_settings['num_images'],
                 new_settings['width'],
                 new_settings['height'],
@@ -269,6 +316,7 @@ def create_settings_interface():
                 new_settings['openAI_api_key'],
                 new_settings['transcription_provider'],
                 new_settings['resemble_enhance_path'],
+                new_settings['txt2img_provider'],
                 "Settings reset to default values!"
             )
 
@@ -276,7 +324,7 @@ def create_settings_interface():
             save_changes,
             inputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                     whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                    num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path],
+                    num_inference_steps_sd3, num_inference_steps_flux1_dev, num_inference_steps_flux1_schnell, guidance_scale_sd3, guidance_scale_flux1_dev, guidance_scale_flux1_schnell, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path, txt2img_provider],
             outputs=result
         )
         
@@ -284,18 +332,19 @@ def create_settings_interface():
             reset_to_default,
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml, tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path, result]
+                     num_inference_steps_sd3, num_inference_steps_flux1_dev, num_inference_steps_flux1_schnell, guidance_scale_sd3, guidance_scale_flux1_dev, guidance_scale_flux1_schnell, num_images, width, height, image_format, provider, ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key, transcription_provider, resemble_enhance_path, txt2img_provider, result]
         )
 
         # Load current settings on interface initialization
         settings_interface.load(
             load_current_settings,
+            
             outputs=[sample_rate, file_format, silence_duration, silence_threshold, lambd, tau, solver, nfe,
                      whisper_model_language, whisper_model_size, whisper_language, silero_sample_rate, use_llm_for_ssml,
                      tts_language,
-                     num_inference_steps, guidance_scale, num_images, width, height, image_format, provider,
+                     num_inference_steps_sd3, num_inference_steps_flux1_dev, num_inference_steps_flux1_schnell, guidance_scale_sd3, guidance_scale_flux1_dev, guidance_scale_flux1_schnell, num_images, width, height, image_format, provider,
                      ollama_model, ollama_url, togetherai_model, together_api_key, groq_model, groq_api_key, openAI_model, openAI_api_key,
-                     transcription_provider, resemble_enhance_path]
+                     transcription_provider, resemble_enhance_path, txt2img_provider]
         )
 
     return settings_interface
