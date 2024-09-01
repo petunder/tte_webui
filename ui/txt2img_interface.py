@@ -2,25 +2,47 @@
 import gradio as gr
 from modules.txt2img_processor import generate_images
 from modules.settings_processor import get_all_settings
+from classes.settings import Settings
 
 
 def create_text2image_interface():
     def load_current_settings():
         current_settings = get_all_settings()
-        return (
-            gr.update(value=current_settings.get('num_inference_steps', 28)),
-            gr.update(value=current_settings.get('guidance_scale', 7.0)),
-            gr.update(value=current_settings.get('num_images', 1)),
-            gr.update(value=current_settings.get('width', 512)),
-            gr.update(value=current_settings.get('height', 512)),
-            gr.update(value=current_settings.get('image_format', 'png'))
-        )
+        settings=Settings()
+        if settings.get_setting('txt2img_provider')=="SD3":
+            return (
+                gr.update(value=current_settings.get('num_inference_steps_sd3')),
+                gr.update(value=current_settings.get('guidance_scale_sd3')),
+                gr.update(value=current_settings.get('num_images')),
+                gr.update(value=current_settings.get('width')),
+                gr.update(value=current_settings.get('height')),
+                gr.update(value=current_settings.get('image_format'))
+            )
+        if settings.get_setting('txt2img_provider')=="Flux.1-DEV":
+            return (
+                gr.update(value=current_settings.get('num_inference_steps_flux1-dev')),
+                gr.update(value=current_settings.get('guidance_scale_flux1-dev')),
+                gr.update(value=current_settings.get('num_images')),
+                gr.update(value=current_settings.get('width')),
+                gr.update(value=current_settings.get('height')),
+                gr.update(value=current_settings.get('image_format'))
+            )
+        if settings.get_setting('txt2img_provider')=="Flux.1-SCHNELL":
+            return (
+                gr.update(value=current_settings.get('num_inference_steps_flux1-schnell')),
+                gr.update(value=current_settings.get('guidance_scale_flux1-schnell')),
+                gr.update(value=current_settings.get('num_images')),
+                gr.update(value=current_settings.get('width')),
+                gr.update(value=current_settings.get('height')),
+                gr.update(value=current_settings.get('image_format'))
+            )
 
     with gr.Blocks() as text2image_tab:
-        gr.Markdown("## Generate images from text using Stable Diffusion 3")
+        gr.Markdown("## Generate images from text")
 
         with gr.Row():
             with gr.Column():
+                
                 prompt = gr.Textbox(label="Prompt", placeholder="Enter your prompt here...")
                 negative_prompt = gr.Textbox(label="Negative Prompt", placeholder="Enter negative prompt (optional)")
 
@@ -45,10 +67,12 @@ def create_text2image_interface():
                     object_fit="contain",
                     height="auto"
                 )
+        
+        
 
-        def display_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height,
+        def display_images( prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height,
                            image_format):
-            image_paths = generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images,
+            image_paths = generate_images( prompt, negative_prompt, num_inference_steps, guidance_scale, num_images,
                                           width, height, image_format)
             return image_paths  # Здесь просто возвращаем список путей к изображениям
 
@@ -65,5 +89,5 @@ def create_text2image_interface():
         text2image_tab.update = update
 
     text2image_tab.load(fn=load_current_settings,
-                        outputs=[num_inference_steps, guidance_scale, num_images, width, height, image_format])
+                        outputs=[ num_inference_steps, guidance_scale, num_images, width, height, image_format])
     return text2image_tab
