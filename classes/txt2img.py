@@ -1,21 +1,40 @@
-# txt2img.py
 import torch
 import gc
-from diffusers import StableDiffusion3Pipeline
-from datetime import datetime
 import os
+from diffusers import StableDiffusion3Pipeline, FluxPipeline
+from datetime import datetime
+from classes.settings import Settings
 
 class Text2ImageProcessor:
-    def __init__(self, model_path="v2ray/stable-diffusion-3-medium-diffusers"):
-        self.model_path = model_path
+    def __init__(self, model_path=None):
+        self.settings = Settings()
+        self.provider = self.settings.get_setting('txt2img_provider')
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        if self.provider == "SD3":
+            self.model_path = model_path if model_path else "v2ray/stable-diffusion-3-medium-diffusers"
+        elif self.provider in ["Flux.1-DEV", "Flux.1-SCHNELL"]:
+            self.model_path = model_path if model_path else "black-forest-labs/FLUX.1-dev"  # Default path for Flux
+        else:
+            raise ValueError(f"Unsupported provider: {self.provider}")
 
     def _load_model(self):
-        if self.device == "cuda":
-            pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16)
+        if self.provider == "SD3":
+            pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16 if self.device == "cuda" else torch.float32)
+        elif self.provider == "Flux.1-DEV":
+            pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
+            if self.device == "cuda":
+                pipe.enable_model_cpu_offload()
+        elif self.provider == "Flux.1-SCHNELL":
+            pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
+            if self.device == "cuda":
+                pipe.enable_model_cpu_offload()
         else:
-            pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float32)
-        return pipe.to(self.device)
+            raise ValueError(f"Unsupported provider: {self.provider}")
+
+        if self.device == "cuda":
+            pipe = pipe.to(self.device)
+        return pipe
 
     @staticmethod
     def clear_memory():
@@ -38,10 +57,9 @@ class Text2ImageProcessor:
         del pipe
         self.clear_memory()
 
-    def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
-                       num_images=1, image_format="png"):
+    def generate_image(self, prompt, negative_prompt, num_inference_steps, guidance_scale, width, height, num_images=1, image_format="png"):
         self.clear_memory()
-
+        
         # Ensure width and height are multiples of 64
         width = (width // 64) * 64
         height = (height // 64) * 64
@@ -61,9 +79,8 @@ class Text2ImageProcessor:
                 images = [img.copy() for img in output.images]  # Make copies of the images
         finally:
             self._unload_model(pipe)
-            del output
             self.clear_memory()
-
+        
         image_paths = []
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         os.makedirs("output", exist_ok=True)
