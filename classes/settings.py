@@ -20,16 +20,23 @@ class Settings:
             'silero_sample_rate': 24000,
             'use_llm_for_ssml': False,
             'tts_language': 'en',
-            'num_inference_steps': 28,
-            'guidance_scale': 7,
+            'txt2img_provider': 'SD3',
+                
+            'num_inference_steps_sd3': 28,
+            'num_inference_steps_flux1-dev': 50,
+            'num_inference_steps_flux1-schnell': 4,
+            'guidance_scale_sd3': 7,
+            'guidance_scale_flux1-dev': 3.5,
+            'guidance_scale_flux1-schnell': 0,  
+                      
             'num_images': 1,
             'width': 1024,
             'height': 1024,
             'image_format': 'png',
-            'provider': 'ollama',  # Новый параметр выбора провайдера
+            'provider': 'ollama',  
             'ollama_model':'aya:35b-23-q8_0',
             'ollama_url': 'http://192.168.1.70:11434/api/generate',
-            'togetherai_model': 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',  # Модель для TogetherAI
+            'togetherai_model': 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo', 
             'together_api_key': '',
             'groq_model':'llama3-8b-8192',
             'groq_api_key': '',
@@ -37,9 +44,10 @@ class Settings:
             'openAI_api_key': '',
             'transcription_provider': 'ollama',
             'resemble_enhance_path': ''
+            
         }
         self.load_settings()
-
+    
     def load_settings(self):
         if os.path.exists(self.settings_file):
             with open(self.settings_file, 'r') as f:
