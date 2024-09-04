@@ -22,12 +22,12 @@ class Text2ImageProcessor:
         if self.provider == "SD3":
             pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16 if self.device == "cuda" else torch.float32)
         elif self.provider == "Flux.1-DEV":
-            pipe = FluxPipeline.from_pretrained("jellyhe/flux1-dev-fp8", torch_dtype=torch.float8)
+            pipe = FluxPipeline.from_pretrained("jellyhe/flux1-dev-fp8", torch_dtype=torch.half)
             if self.device == "cuda":
                 pipe.enable_model_cpu_offload()
         elif self.provider == "Flux.1-SCHNELL":
 #            pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
-            pipe = FluxPipeline.from_pretrained("drbaph/FLUX.1-schnell-dev-merged-fp8", torch_dtype=torch.float8)
+            pipe = FluxPipeline.from_pretrained("drbaph/FLUX.1-schnell-dev-merged-fp8", torch_dtype=torch.half)
             if self.device == "cuda":
                 pipe.enable_model_cpu_offload()
         else:
