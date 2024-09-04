@@ -14,7 +14,7 @@ class Text2ImageProcessor:
         if self.provider == "SD3":
             self.model_path = model_path if model_path else "v2ray/stable-diffusion-3-medium-diffusers"
         elif self.provider in ["Flux.1-DEV", "Flux.1-SCHNELL"]:
-            self.model_path = model_path if model_path else "black-forest-labs/FLUX.1-dev"  # Default path for Flux
+            self.model_path = model_path if model_path else "camenduru/FLUX.1-dev-diffusers"  # Default path for Flux
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
 
@@ -22,7 +22,7 @@ class Text2ImageProcessor:
         if self.provider == "SD3":
             pipe = StableDiffusion3Pipeline.from_pretrained(self.model_path, torch_dtype=torch.float16 if self.device == "cuda" else torch.float32)
         elif self.provider == "Flux.1-DEV":
-            pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
+            pipe = FluxPipeline.from_pretrained("camenduru/FLUX.1-dev-diffusers", torch_dtype=torch.bfloat16)
             if self.device == "cuda":
                 pipe.enable_model_cpu_offload()
         elif self.provider == "Flux.1-SCHNELL":
