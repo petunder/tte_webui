@@ -27,7 +27,7 @@ class Text2ImageProcessor:
                 pipe.enable_model_cpu_offload()
         elif self.provider == "Flux.1-SCHNELL":
 #            pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
-            pipe = FluxPipeline.from_pretrained("cocktailpeanut/flux1-schnell-q8", torch_dtype=torch.float16)
+            pipe = FluxPipeline.from_pretrained("Niansuh/FLUX.1-schnell", torch_dtype=torch.float16)
             if self.device == "cuda":
                 pipe.enable_model_cpu_offload()
         else:
