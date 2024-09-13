@@ -1,3 +1,4 @@
+#app.py
 import gradio as gr
 from ui.audio_interface import create_combined_interface
 from ui.settings_interface import create_settings_interface
