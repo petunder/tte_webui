@@ -1,6 +1,6 @@
 # text2image_interface.py
 import gradio as gr
-from modules.text2image_processor import generate_images
+from modules.text2img_processor import generate_images
 from modules.settings_processor import get_all_settings
 from classes.settings import Settings
 
