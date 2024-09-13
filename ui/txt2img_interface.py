@@ -1,4 +1,4 @@
-# text2image_interface.py
+# txt2img_interface.py
 import gradio as gr
 from modules.txt2img_processor import generate_images
 from modules.settings_processor import get_all_settings
@@ -92,8 +92,8 @@ def create_text2image_interface():
                 height=height,
                 image_format=image_format
             )
-            # Преобразуем пути к изображениям в формат, совместимый с Gradio
-            return [image_paths]
+            # Возвращаем список кортежей (путь_к_изображению, подпись)
+            return [(path, f"Image {i + 1}") for i, path in enumerate(image_paths)]
 
         generate_btn.click(
             display_images,

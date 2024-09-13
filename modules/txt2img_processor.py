@@ -1,4 +1,4 @@
-# text2image_processor.py
+# txt2img_processor.py
 from classes.txt2img import Text2ImageProcessor
 
 def generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale, num_images, width, height, image_format):
@@ -14,6 +14,6 @@ def generate_images(prompt, negative_prompt, num_inference_steps, guidance_scale
             num_images=num_images,
             image_format=image_format
         )
+        return image_paths
     finally:
         processor = None  # Удаление ссылки на процессор для очистки памяти
-    return image_paths

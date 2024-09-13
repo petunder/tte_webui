@@ -89,7 +89,6 @@ class Text2ImageProcessor:
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
         image_paths = []
-
         for i in range(num_images):
             output_path = os.path.join(output_dir, f"generated_image_{timestamp}_{i}.{image_format}")
             command = self.build_command(prompt, negative_prompt, num_inference_steps, guidance_scale, width, height,
@@ -126,9 +125,10 @@ class Text2ImageProcessor:
             ]
         elif self.provider in ["Flux.1-DEV", "Flux.1-SCHNELL"]:
             flux_command = [
-                "--diffusion-model", self.model_path,  # Используем полный путь к модели
+                "--diffusion-model", self.model_path,
                 "--clip_l", os.path.join(self.models_dir, "clip_l.safetensors"),
                 "--t5xxl", os.path.join(self.models_dir, "t5xxl_fp16.safetensors"),
+                "--vae", os.path.join(self.models_dir, "ae.safetensors"),  # Добавьте эту строку
                 "-p", prompt,
                 "--cfg-scale", str(guidance_scale),
                 "--steps", str(num_inference_steps),
@@ -137,12 +137,8 @@ class Text2ImageProcessor:
                 "-W", str(width),
                 "--seed", str(self.settings.get_setting('seed') or -1),
                 "-o", output_path,
-                "-v"  # Добавляем verbose режим для обоих Flux моделей
+                "-v"
             ]
-            if self.provider == "Flux.1-SCHNELL":
-                flux_command += [
-                    "--vae", os.path.join(self.models_dir, "ae.safetensors"),
-                ]
             base_command += flux_command
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
