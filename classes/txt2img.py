@@ -126,7 +126,7 @@ class Text2ImageProcessor:
             ]
         elif self.provider in ["Flux.1-DEV", "Flux.1-SCHNELL"]:
             flux_command = [
-                "--diffusion-model", self.model_file,
+                "--diffusion-model", self.model_path,  # Используем полный путь к модели
                 "--clip_l", os.path.join(self.models_dir, "clip_l.safetensors"),
                 "--t5xxl", os.path.join(self.models_dir, "t5xxl_fp16.safetensors"),
                 "-p", prompt,
@@ -136,12 +136,12 @@ class Text2ImageProcessor:
                 "-H", str(height),
                 "-W", str(width),
                 "--seed", str(self.settings.get_setting('seed') or -1),
-                "-o", output_path
+                "-o", output_path,
+                "-v"  # Добавляем verbose режим для обоих Flux моделей
             ]
             if self.provider == "Flux.1-SCHNELL":
                 flux_command += [
                     "--vae", os.path.join(self.models_dir, "ae.safetensors"),
-                    "-v"  # Включить verbose, если требуется
                 ]
             base_command += flux_command
         else:
